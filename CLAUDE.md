@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Sofia Dashboard
 
 Seasonal rewards dashboard for the Sofia browser extension — a Web3 protocol that tracks browsing intents and rewards users with Gold tokens.
@@ -13,10 +17,12 @@ Seasonal rewards dashboard for the Sofia browser extension — a Web3 protocol t
 ## Commands
 
 ```bash
-npm run dev      # Start dev server (Vite)
-npm run build    # Production build → dist/
-npm run preview  # Preview production build
+pnpm dev         # Start dev server (Vite)
+pnpm build       # Production build → dist/
+pnpm preview     # Preview production build
 ```
+
+No test runner, linter, or formatter is configured.
 
 ## Project Structure
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { SEASON_END } from '../data';
+import { SEASON_END } from '../config';
 import './Hero.css';
 
 function Hero() {

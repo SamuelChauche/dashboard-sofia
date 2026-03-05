@@ -14,11 +14,47 @@
 
 .leaderboard__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: var(--space-xl);
   flex-wrap: wrap;
   gap: var(--space-md);
+}
+
+.leaderboard__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.leaderboard__tabs {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.leaderboard__tab {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--border-radius-pill);
+  background: transparent;
+  border: 1px solid var(--color-border-glass);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.leaderboard__tab:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-primary);
+}
+
+.leaderboard__tab--active {
+  background: var(--color-primary);
+  color: var(--color-primary-dark);
+  border-color: transparent;
 }
 
 .leaderboard__title {
@@ -240,6 +276,57 @@
 .leaderboard__mono {
   font-family: var(--font-body);
   font-weight: 500;
+}
+
+.leaderboard__cell--address {
+  min-width: 140px;
+}
+
+.leaderboard__cell--num {
+  text-align: right;
+}
+
+.leaderboard__cell--error {
+  color: var(--color-error, #ef4444);
+  text-align: center;
+  font-style: italic;
+}
+
+.leaderboard__cell--pnl-positive {
+  color: #22c55e;
+}
+
+.leaderboard__cell--pnl-negative {
+  color: #ef4444;
+}
+
+.leaderboard__address-link {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.leaderboard__address-link:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.leaderboard__skeleton {
+  display: inline-block;
+  width: 60px;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--color-bg-glass-light) 25%, var(--color-bg-glass-lighter) 50%, var(--color-bg-glass-light) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .leaderboard__badge {
