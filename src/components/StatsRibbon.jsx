@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { stats } from '../data';
 import './StatsRibbon.css';
 
 function parseValue(str) {
@@ -62,7 +61,7 @@ function AnimatedValue({ value }) {
   return <span ref={ref} className="stats-ribbon__value">{display}</span>;
 }
 
-function StatsRibbon() {
+function StatsRibbon({ stats = [] }) {
   return (
     <section className="stats-ribbon">
       <div className="stats-ribbon__inner">

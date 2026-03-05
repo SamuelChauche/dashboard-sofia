@@ -1,92 +1,218 @@
-import { useState } from 'react';
-import { leaderboard } from '../data';
+import { useState, useMemo } from 'react';
+import { formatEther } from 'viem';
+import { useSeasonPool } from '../hooks/useSeasonPool';
+import { EXPLORER_URL } from '../config';
 import './Leaderboard.css';
 
-const SORT_OPTIONS = ['Streak', 'Certifications', 'Gold', 'Pioneers'];
+const ALPHA_SORT_OPTIONS = ['TX', 'Intentions', 'Pioneer', 'Trust Volume'];
+const POOL_SORT_OPTIONS = ['Current Value', 'P&L'];
 
-function Leaderboard() {
-  const [sortBy, setSortBy] = useState('Certifications');
+function truncateAddress(addr) {
+  if (!addr) return '';
+  return addr.slice(0, 6) + '...' + addr.slice(-4);
+}
 
-  const sorted = [...leaderboard].sort((a, b) => {
+function formatTrust(wei) {
+  const num = parseFloat(formatEther(wei));
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+  if (num >= 1) return num.toFixed(2);
+  return num.toFixed(4);
+}
+
+function sortAlpha(data, sortBy) {
+  return [...data].sort((a, b) => {
     switch (sortBy) {
-      case 'Streak':
-        return b.streakDays - a.streakDays;
-      case 'Certifications':
-        return b.certs - a.certs;
-      case 'Gold':
-        return b.gold - a.gold;
-      case 'Pioneers':
-        return (b.pioneer ? 1 : 0) - (a.pioneer ? 1 : 0);
-      default:
-        return 0;
+      case 'TX': return b.tx - a.tx;
+      case 'Intentions': return b.intentions - a.intentions;
+      case 'Pioneer': return b.pioneer - a.pioneer;
+      case 'Trust Volume': return b.trustVolume > a.trustVolume ? -1 : 1;
+      default: return 0;
     }
   });
+}
+
+function sortPool(data, sortBy) {
+  return [...data].sort((a, b) => {
+    switch (sortBy) {
+      case 'Current Value': return b.currentValue > a.currentValue ? -1 : 1;
+      case 'P&L': return b.pnl > a.pnl ? -1 : 1;
+      default: return 0;
+    }
+  });
+}
+
+function SkeletonRows({ cols }) {
+  return Array.from({ length: 5 }).map((_, i) => (
+    <tr key={i} className="leaderboard__row">
+      {Array.from({ length: cols }).map((_, j) => (
+        <td key={j} className="leaderboard__cell">
+          <span className="leaderboard__skeleton" />
+        </td>
+      ))}
+    </tr>
+  ));
+}
+
+function Leaderboard({ alphaData = [], alphaLoading, alphaError }) {
+  const [activeTab, setActiveTab] = useState('alpha');
+  const [alphaSortBy, setAlphaSortBy] = useState('TX');
+  const [poolSortBy, setPoolSortBy] = useState('Current Value');
+
+  const { data: poolData, loading: poolLoading, error: poolError } = useSeasonPool(activeTab === 'pool');
+
+  const sortedAlpha = useMemo(() => sortAlpha(alphaData, alphaSortBy), [alphaData, alphaSortBy]);
+  const sortedPool = useMemo(() => poolData ? sortPool(poolData, poolSortBy) : [], [poolData, poolSortBy]);
+
+  const isAlpha = activeTab === 'alpha';
+  const sortOptions = isAlpha ? ALPHA_SORT_OPTIONS : POOL_SORT_OPTIONS;
+  const currentSort = isAlpha ? alphaSortBy : poolSortBy;
+  const setCurrentSort = isAlpha ? setAlphaSortBy : setPoolSortBy;
+  const loading = isAlpha ? alphaLoading : poolLoading;
+  const error = isAlpha ? alphaError : poolError;
 
   return (
     <section className="leaderboard">
       <div className="leaderboard__inner">
         <div className="leaderboard__header">
           <h2 className="leaderboard__title">Leaderboard</h2>
-          <div className="leaderboard__filters">
-            {SORT_OPTIONS.map((option) => (
+          <div className="leaderboard__controls">
+            <div className="leaderboard__tabs">
               <button
-                key={option}
-                className={`leaderboard__filter${sortBy === option ? ' leaderboard__filter--active' : ''}`}
-                onClick={() => setSortBy(option)}
+                className={`leaderboard__tab${activeTab === 'alpha' ? ' leaderboard__tab--active' : ''}`}
+                onClick={() => setActiveTab('alpha')}
               >
-                {option}
+                Alpha Testers
               </button>
-            ))}
+              <button
+                className={`leaderboard__tab${activeTab === 'pool' ? ' leaderboard__tab--active' : ''}`}
+                onClick={() => setActiveTab('pool')}
+              >
+                Season Pool
+              </button>
+            </div>
+            <div className="leaderboard__filters">
+              {sortOptions.map((option) => (
+                <button
+                  key={option}
+                  className={`leaderboard__filter${currentSort === option ? ' leaderboard__filter--active' : ''}`}
+                  onClick={() => setCurrentSort(option)}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         <div className="leaderboard__table-wrapper">
           <table className="leaderboard__table">
-            <thead>
-              <tr className="leaderboard__row leaderboard__row--head">
-                <th className="leaderboard__cell leaderboard__cell--rank">Rank</th>
-                <th className="leaderboard__cell leaderboard__cell--sort">Sort</th>
-                <th className="leaderboard__cell leaderboard__cell--user">User</th>
-                <th className="leaderboard__cell leaderboard__cell--streak">Streak</th>
-                <th className="leaderboard__cell leaderboard__cell--certs">Certifications</th>
-                <th className="leaderboard__cell leaderboard__cell--gold">Gold</th>
-                <th className="leaderboard__cell leaderboard__cell--pioneer">Pioneer</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((user, i) => (
-                <tr
-                  key={user.rank}
-                  className={`leaderboard__row${i < 3 ? ' leaderboard__row--highlighted' : ''}`}
-                >
-                  <td className="leaderboard__cell leaderboard__cell--rank">
-                    {i + 1}
-                  </td>
-                  <td className="leaderboard__cell leaderboard__cell--sort">
-                    <span className={`leaderboard__avatar-wrap${i === 0 ? ' leaderboard__avatar-wrap--top' : ''}`}>
-                      <span className={`leaderboard__avatar leaderboard__avatar--${user.avatarColor}`} />
-                    </span>
-                  </td>
-                  <td className="leaderboard__cell leaderboard__cell--user">
-                    <span className="leaderboard__name">{user.name}</span>
-                  </td>
-                  <td className="leaderboard__cell leaderboard__cell--streak">
-                    {user.streak}
-                  </td>
-                  <td className="leaderboard__cell leaderboard__cell--certs">
-                    <span className="leaderboard__mono">{user.certs.toLocaleString()}</span>
-                  </td>
-                  <td className="leaderboard__cell leaderboard__cell--gold">
-                    <span className="leaderboard__mono">{user.gold.toLocaleString()}</span>
-                  </td>
-                  <td className="leaderboard__cell leaderboard__cell--pioneer">
-                    {user.pioneer && (
-                      <span className="leaderboard__badge">Pioneer</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            {isAlpha ? (
+              <>
+                <thead>
+                  <tr className="leaderboard__row leaderboard__row--head">
+                    <th className="leaderboard__cell leaderboard__cell--rank">Rank</th>
+                    <th className="leaderboard__cell leaderboard__cell--address">Tester</th>
+                    <th className="leaderboard__cell leaderboard__cell--num">TX</th>
+                    <th className="leaderboard__cell leaderboard__cell--num">Intentions</th>
+                    <th className="leaderboard__cell leaderboard__cell--num">Pioneer</th>
+                    <th className="leaderboard__cell leaderboard__cell--num">Trust Volume</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading && <SkeletonRows cols={6} />}
+                  {error && (
+                    <tr className="leaderboard__row">
+                      <td className="leaderboard__cell leaderboard__cell--error" colSpan={6}>{error}</td>
+                    </tr>
+                  )}
+                  {!loading && !error && sortedAlpha.map((user, i) => (
+                    <tr
+                      key={user.address}
+                      className={`leaderboard__row${i < 3 ? ' leaderboard__row--highlighted' : ''}`}
+                    >
+                      <td className="leaderboard__cell leaderboard__cell--rank">{i + 1}</td>
+                      <td className="leaderboard__cell leaderboard__cell--address">
+                        <a
+                          href={`${EXPLORER_URL}/address/${user.address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="leaderboard__address-link"
+                        >
+                          {truncateAddress(user.address)}
+                        </a>
+                      </td>
+                      <td className="leaderboard__cell leaderboard__cell--num">
+                        <span className="leaderboard__mono">{user.tx.toLocaleString()}</span>
+                      </td>
+                      <td className="leaderboard__cell leaderboard__cell--num">
+                        <span className="leaderboard__mono">{user.intentions.toLocaleString()}</span>
+                      </td>
+                      <td className="leaderboard__cell leaderboard__cell--num">
+                        <span className="leaderboard__mono">{user.pioneer}</span>
+                      </td>
+                      <td className="leaderboard__cell leaderboard__cell--num">
+                        <span className="leaderboard__mono">{formatTrust(user.trustVolume)}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </>
+            ) : (
+              <>
+                <thead>
+                  <tr className="leaderboard__row leaderboard__row--head">
+                    <th className="leaderboard__cell leaderboard__cell--rank">Rank</th>
+                    <th className="leaderboard__cell leaderboard__cell--address">Staker</th>
+                    <th className="leaderboard__cell leaderboard__cell--num">Shares</th>
+                    <th className="leaderboard__cell leaderboard__cell--num">Current Value</th>
+                    <th className="leaderboard__cell leaderboard__cell--num">P&L</th>
+                    <th className="leaderboard__cell leaderboard__cell--num">P&L %</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {poolLoading && <SkeletonRows cols={6} />}
+                  {poolError && (
+                    <tr className="leaderboard__row">
+                      <td className="leaderboard__cell leaderboard__cell--error" colSpan={6}>{poolError}</td>
+                    </tr>
+                  )}
+                  {!poolLoading && !poolError && sortedPool.map((pos, i) => (
+                    <tr
+                      key={pos.address}
+                      className={`leaderboard__row${i < 3 ? ' leaderboard__row--highlighted' : ''}`}
+                    >
+                      <td className="leaderboard__cell leaderboard__cell--rank">{i + 1}</td>
+                      <td className="leaderboard__cell leaderboard__cell--address">
+                        <a
+                          href={`${EXPLORER_URL}/address/${pos.address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="leaderboard__address-link"
+                        >
+                          {truncateAddress(pos.address)}
+                        </a>
+                      </td>
+                      <td className="leaderboard__cell leaderboard__cell--num">
+                        <span className="leaderboard__mono">{formatTrust(pos.shares)}</span>
+                      </td>
+                      <td className="leaderboard__cell leaderboard__cell--num">
+                        <span className="leaderboard__mono">{formatTrust(pos.currentValue)}</span>
+                      </td>
+                      <td className={`leaderboard__cell leaderboard__cell--num ${pos.pnl >= 0n ? 'leaderboard__cell--pnl-positive' : 'leaderboard__cell--pnl-negative'}`}>
+                        <span className="leaderboard__mono">
+                          {pos.pnl >= 0n ? '+' : ''}{formatTrust(pos.pnl)}
+                        </span>
+                      </td>
+                      <td className={`leaderboard__cell leaderboard__cell--num ${pos.pnlPercent >= 0 ? 'leaderboard__cell--pnl-positive' : 'leaderboard__cell--pnl-negative'}`}>
+                        <span className="leaderboard__mono">
+                          {pos.pnlPercent >= 0 ? '+' : ''}{pos.pnlPercent.toFixed(1)}%
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </>
+            )}
           </table>
         </div>
       </div>
