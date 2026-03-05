@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { SEASON_END } from '../config';
-import './Hero.css';
+import './styles/Hero.css';
 
 function Hero() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
 
   function getTimeLeft() {
     const now = new Date();
-    const diff = SEASON_END - now;
+    const diff = SEASON_END.getTime() - now.getTime();
 
     if (diff <= 0) {
       return { days: 0, hours: 0, minutes: 0 };
@@ -28,7 +28,7 @@ function Hero() {
     return () => clearInterval(timer);
   }, []);
 
-  const pad = (n) => String(n).padStart(2, '0');
+  const pad = (n: number) => String(n).padStart(2, '0');
 
   return (
     <section className="hero">

@@ -1,4 +1,4 @@
-import './FooterCTA.css';
+import './styles/FooterCTA.css';
 
 function FooterCTA() {
   return (

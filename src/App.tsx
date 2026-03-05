@@ -11,7 +11,7 @@ import Grainient from './components/Grainient';
 import { useAlphaTesters } from './hooks/useAlphaTesters';
 import './App.css';
 
-function formatTrustShort(wei) {
+function formatTrustShort(wei: bigint) {
   const num = parseFloat(formatEther(wei));
   if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
   if (num >= 1) return num.toFixed(1);

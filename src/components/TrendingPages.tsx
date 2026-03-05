@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { trending } from '../data';
-import './TrendingPages.css';
+import './styles/TrendingPages.css';
 
 const FILTER_OPTIONS = ['Sort Rate', 'Explorers'];
 

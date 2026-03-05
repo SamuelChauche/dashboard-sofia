@@ -2,24 +2,28 @@ import { useState, useMemo } from 'react';
 import { formatEther } from 'viem';
 import { useSeasonPool } from '../hooks/useSeasonPool';
 import { EXPLORER_URL } from '../config';
-import './Leaderboard.css';
+import type { LeaderboardProps, AlphaTester, PoolPosition } from '../types';
+import './styles/Leaderboard.css';
 
-const ALPHA_SORT_OPTIONS = ['TX', 'Intentions', 'Pioneer', 'Trust Volume'];
-const POOL_SORT_OPTIONS = ['Current Value', 'P&L'];
+type AlphaSortOption = 'TX' | 'Intentions' | 'Pioneer' | 'Trust Volume';
+type PoolSortOption = 'Current Value' | 'P&L';
 
-function truncateAddress(addr) {
+const ALPHA_SORT_OPTIONS: AlphaSortOption[] = ['TX', 'Intentions', 'Pioneer', 'Trust Volume'];
+const POOL_SORT_OPTIONS: PoolSortOption[] = ['Current Value', 'P&L'];
+
+function truncateAddress(addr: string) {
   if (!addr) return '';
   return addr.slice(0, 6) + '...' + addr.slice(-4);
 }
 
-function formatTrust(wei) {
+function formatTrust(wei: bigint) {
   const num = parseFloat(formatEther(wei));
   if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
   if (num >= 1) return num.toFixed(2);
   return num.toFixed(4);
 }
 
-function sortAlpha(data, sortBy) {
+function sortAlpha(data: AlphaTester[], sortBy: AlphaSortOption) {
   return [...data].sort((a, b) => {
     switch (sortBy) {
       case 'TX': return b.tx - a.tx;
@@ -31,7 +35,7 @@ function sortAlpha(data, sortBy) {
   });
 }
 
-function sortPool(data, sortBy) {
+function sortPool(data: PoolPosition[], sortBy: PoolSortOption) {
   return [...data].sort((a, b) => {
     switch (sortBy) {
       case 'Current Value': return b.currentValue > a.currentValue ? -1 : 1;
@@ -41,7 +45,7 @@ function sortPool(data, sortBy) {
   });
 }
 
-function SkeletonRows({ cols }) {
+function SkeletonRows({ cols }: { cols: number }) {
   return Array.from({ length: 5 }).map((_, i) => (
     <tr key={i} className="leaderboard__row">
       {Array.from({ length: cols }).map((_, j) => (
@@ -53,10 +57,10 @@ function SkeletonRows({ cols }) {
   ));
 }
 
-function Leaderboard({ alphaData = [], alphaLoading, alphaError }) {
-  const [activeTab, setActiveTab] = useState('alpha');
-  const [alphaSortBy, setAlphaSortBy] = useState('TX');
-  const [poolSortBy, setPoolSortBy] = useState('Current Value');
+function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardProps) {
+  const [activeTab, setActiveTab] = useState<'alpha' | 'pool'>('alpha');
+  const [alphaSortBy, setAlphaSortBy] = useState<AlphaSortOption>('TX');
+  const [poolSortBy, setPoolSortBy] = useState<PoolSortOption>('Current Value');
 
   const { data: poolData, loading: poolLoading, error: poolError } = useSeasonPool(activeTab === 'pool');
 
@@ -66,7 +70,9 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }) {
   const isAlpha = activeTab === 'alpha';
   const sortOptions = isAlpha ? ALPHA_SORT_OPTIONS : POOL_SORT_OPTIONS;
   const currentSort = isAlpha ? alphaSortBy : poolSortBy;
-  const setCurrentSort = isAlpha ? setAlphaSortBy : setPoolSortBy;
+  const setCurrentSort = isAlpha
+    ? (v: string) => setAlphaSortBy(v as AlphaSortOption)
+    : (v: string) => setPoolSortBy(v as PoolSortOption);
   const loading = isAlpha ? alphaLoading : poolLoading;
   const error = isAlpha ? alphaError : poolError;
 

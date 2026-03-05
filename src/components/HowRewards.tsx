@@ -1,5 +1,5 @@
 import { rewards } from '../data';
-import './HowRewards.css';
+import './styles/HowRewards.css';
 
 function HowRewards() {
   return (

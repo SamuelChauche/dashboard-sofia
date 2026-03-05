@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { formatEther } from 'viem'
+import type { Address } from 'viem'
 import { EventFetcher } from '../services/eventFetcher'
 import { REFRESH_INTERVAL } from '../config'
-import type { TransactionForwardedEvent, AlphaTester, AlphaTotals, AlphaTestersData } from '../types'
+import type { TransactionForwardedEvent, AlphaTester, AlphaTestersData } from '../types'
 
 interface WalletEntry {
-  address: string
+  address: Address
   tx: number
   intentions: number
   pioneer: number
