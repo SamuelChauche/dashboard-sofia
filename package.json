@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:check": "tsc --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -15,7 +16,10 @@
     "viem": "^2.47.0"
   },
   "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.9.3",
     "vite": "^6.0.0"
   },
   "pnpm": {
