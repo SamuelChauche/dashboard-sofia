@@ -6,6 +6,8 @@ import type { Address } from 'viem'
 import { createAvatar } from '@dicebear/core'
 import { glass } from '@dicebear/collection'
 import { graphqlQuery } from '../services/graphqlClient'
+import { GET_ACCOUNT_LABELS } from '../graphql/queries'
+import type { GetAccountLabelsResponse } from '../graphql/queries'
 
 // ENS fallback client for addresses not indexed by Intuition
 const ensClient = createPublicClient({
@@ -16,31 +18,6 @@ const ensClient = createPublicClient({
 // Global caches persist across re-renders
 const labelCache = new Map<string, string | null>()
 const avatarCache = new Map<string, string | null>()
-
-const GET_ACCOUNT_LABELS = `
-  query GetAccountLabels($ids: [String!]!) {
-    accounts(where: { id: { _in: $ids } }) {
-      id
-      label
-      image
-      atom {
-        label
-        image
-      }
-    }
-  }
-`
-
-interface AccountResult {
-  id: string
-  label?: string | null
-  image?: string | null
-  atom?: { label?: string | null; image?: string | null } | null
-}
-
-interface GetAccountLabelsResponse {
-  accounts: AccountResult[]
-}
 
 function isRealLabel(label?: string | null): boolean {
   if (!label) return false

@@ -1,0 +1,127 @@
+/* ===========================================
+   Personal Stats Component — Sofia Brandkit
+   =========================================== */
+
+.personal-stats {
+  padding: 0 var(--space-xl);
+  margin-bottom: var(--space-section);
+}
+
+.personal-stats__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.personal-stats__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 400;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xl);
+}
+
+.personal-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-lg);
+}
+
+.personal-stats__card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-xl) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  box-shadow: var(--glass-shadow);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.personal-stats__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), var(--glass-shadow);
+}
+
+.personal-stats__card--positive {
+  border-color: color-mix(in srgb, #22c55e 30%, transparent);
+}
+
+.personal-stats__card--negative {
+  border-color: color-mix(in srgb, #ef4444 30%, transparent);
+}
+
+.personal-stats__value {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl, 28px);
+  font-weight: 400;
+  color: var(--color-text-primary);
+}
+
+.personal-stats__card--positive .personal-stats__value {
+  color: #22c55e;
+}
+
+.personal-stats__card--negative .personal-stats__value {
+  color: #ef4444;
+}
+
+.personal-stats__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 500;
+}
+
+.personal-stats__sub {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* Not in program */
+.personal-stats__not-found {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-4xl, 40px) var(--space-3xl, 32px);
+  text-align: center;
+  box-shadow: var(--glass-shadow);
+}
+
+.personal-stats__not-found-text {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.personal-stats__not-found-sub {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .personal-stats__grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .personal-stats {
+    padding: 0 var(--space-lg);
+  }
+
+  .personal-stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

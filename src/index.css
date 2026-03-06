@@ -26,6 +26,8 @@
   --color-hover-yellow: #FFE078;
 
   /* Intention Colors */
+  --color-intent-trusted: #22C55E;
+  --color-intent-distrusted: #EF4444;
   --color-intent-work: #3B82F6;
   --color-intent-work-light: #60A5FA;
   --color-intent-learning: #10B981;

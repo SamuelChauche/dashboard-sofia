@@ -1,14 +1,19 @@
 import { useMemo } from 'react';
 import { formatEther } from 'viem';
+import type { Address } from 'viem';
+import { usePrivy } from '@privy-io/react-auth';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import StatsRibbon from './components/StatsRibbon';
+import PersonalStats from './components/PersonalStats';
 import Leaderboard from './components/Leaderboard';
 import TrendingPages from './components/TrendingPages';
 import HowRewards from './components/HowRewards';
 import FooterCTA from './components/FooterCTA';
 
 import { useAlphaTesters } from './hooks/useAlphaTesters';
+import { useSeasonPool } from './hooks/useSeasonPool';
+import { useUserStats } from './hooks/useUserStats';
 import './App.css';
 
 function formatTrustShort(wei: bigint) {
@@ -19,7 +24,15 @@ function formatTrustShort(wei: bigint) {
 }
 
 function App() {
+  const { authenticated, user } = usePrivy();
   const { leaderboard, totals, loading, error } = useAlphaTesters();
+  const { data: poolData, vaultStats, loading: poolLoading, error: poolError } = useSeasonPool(true);
+
+  const walletAddress = authenticated
+    ? (user?.wallet?.address as Address | undefined) ?? null
+    : null;
+
+  const userStats = useUserStats(walletAddress, leaderboard, poolData);
 
   const stats = useMemo(() => {
     if (!totals) return [];
@@ -38,7 +51,22 @@ function App() {
       <Navbar />
       <Hero />
       <StatsRibbon stats={stats} />
-      <Leaderboard alphaData={leaderboard} alphaLoading={loading} alphaError={error} />
+      {authenticated && walletAddress && !loading && (
+        <PersonalStats
+          userStats={userStats}
+          totalAlphaTesters={totals?.wallets ?? 0}
+          totalPoolStakers={vaultStats?.totalStakers ?? null}
+        />
+      )}
+      <Leaderboard
+        alphaData={leaderboard}
+        alphaLoading={loading}
+        alphaError={error}
+        poolData={poolData}
+        poolLoading={poolLoading}
+        poolError={poolError}
+        connectedAddress={walletAddress}
+      />
       <TrendingPages />
       <HowRewards />
       <FooterCTA />
