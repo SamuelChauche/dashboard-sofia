@@ -18,7 +18,7 @@ export class RpcQueue {
   private config: RequiredConfig
   private busy = false
   private pending: PendingEntry[] = []
-  private lastDispatchTime = 0
+  private lastDispatchTime = Date.now()
   private backoffUntil = 0
   private consecutiveRateLimits = 0
 

@@ -34,7 +34,7 @@ function Hero() {
     <section className="hero">
       <div className="hero__bg" />
       <div className="hero__content">
-        <p className="hero__label">Season 1 ends in</p>
+        <p className="hero__label">Beta Season ends in</p>
         <div className="hero__countdown">
           <span className="hero__countdown-value">{timeLeft.days}d</span>
           <span className="hero__countdown-sep" />

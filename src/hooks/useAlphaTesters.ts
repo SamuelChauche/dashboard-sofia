@@ -32,7 +32,7 @@ function aggregateEvents(events: TransactionForwardedEvent[]): AlphaTestersData 
     entry.tx++
     totalTx++
 
-    if (evt.operation === 'deposit') {
+    if (evt.operation === 'deposit' || evt.operation === 'depositBatch') {
       entry.intentions++
       totalIntentions++
     }
@@ -96,7 +96,8 @@ export function useAlphaTesters() {
     load()
     const id = setInterval(load, REFRESH_INTERVAL)
     return () => clearInterval(id)
-  }, [load])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return { ...data, loading, error }
 }

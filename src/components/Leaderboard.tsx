@@ -29,7 +29,7 @@ function sortAlpha(data: AlphaTester[], sortBy: AlphaSortOption) {
       case 'TX': return b.tx - a.tx;
       case 'Intentions': return b.intentions - a.intentions;
       case 'Pioneer': return b.pioneer - a.pioneer;
-      case 'Trust Volume': return b.trustVolume > a.trustVolume ? -1 : 1;
+      case 'Trust Volume': return a.trustVolume > b.trustVolume ? -1 : a.trustVolume < b.trustVolume ? 1 : 0;
       default: return 0;
     }
   });
@@ -81,32 +81,30 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardPr
       <div className="leaderboard__inner">
         <div className="leaderboard__header">
           <h2 className="leaderboard__title">Leaderboard</h2>
-          <div className="leaderboard__controls">
-            <div className="leaderboard__tabs">
+          <div className="leaderboard__tabs">
+            <button
+              className={`leaderboard__tab${activeTab === 'alpha' ? ' leaderboard__tab--active' : ''}`}
+              onClick={() => setActiveTab('alpha')}
+            >
+              Alpha Testers
+            </button>
+            <button
+              className={`leaderboard__tab${activeTab === 'pool' ? ' leaderboard__tab--active' : ''}`}
+              onClick={() => setActiveTab('pool')}
+            >
+              Season Pool
+            </button>
+          </div>
+          <div className="leaderboard__filters">
+            {sortOptions.map((option) => (
               <button
-                className={`leaderboard__tab${activeTab === 'alpha' ? ' leaderboard__tab--active' : ''}`}
-                onClick={() => setActiveTab('alpha')}
+                key={option}
+                className={`leaderboard__filter${currentSort === option ? ' leaderboard__filter--active' : ''}`}
+                onClick={() => setCurrentSort(option)}
               >
-                Alpha Testers
+                {option}
               </button>
-              <button
-                className={`leaderboard__tab${activeTab === 'pool' ? ' leaderboard__tab--active' : ''}`}
-                onClick={() => setActiveTab('pool')}
-              >
-                Season Pool
-              </button>
-            </div>
-            <div className="leaderboard__filters">
-              {sortOptions.map((option) => (
-                <button
-                  key={option}
-                  className={`leaderboard__filter${currentSort === option ? ' leaderboard__filter--active' : ''}`}
-                  onClick={() => setCurrentSort(option)}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
 

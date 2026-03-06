@@ -3,11 +3,12 @@ import type { StatsRibbonProps } from '../types';
 import './styles/StatsRibbon.css';
 
 function parseValue(str: string) {
-  const cleaned = str.replace(/,/g, '');
-  if (cleaned.endsWith('k')) {
-    return { num: parseFloat(cleaned), suffix: 'k', decimals: cleaned.includes('.') ? cleaned.split('.')[1].replace('k', '').length : 0 };
+  if (str.endsWith('k')) {
+    const numPart = str.replace(/[^0-9.]/g, '');
+    return { num: parseFloat(numPart), suffix: 'k', decimals: numPart.includes('.') ? numPart.split('.')[1].length : 0 };
   }
-  return { num: parseInt(cleaned, 10), suffix: '', decimals: 0 };
+  const cleaned = str.replace(/[^0-9]/g, '');
+  return { num: parseInt(cleaned, 10) || 0, suffix: '', decimals: 0 };
 }
 
 function formatValue(current: number, suffix: string, decimals: number) {
@@ -30,11 +31,16 @@ function AnimatedValue({ value }: { value: string }) {
     const el = ref.current;
     if (!el) return;
 
+    const { num, suffix, decimals } = parseValue(value);
+    if (num === 0) return;
+
+    // Reset so animation can replay when value changes
+    animated.current = false;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !animated.current) {
           animated.current = true;
-          const { num, suffix, decimals } = parseValue(value);
           const duration = 2000;
           const start = performance.now();
 
@@ -68,7 +74,6 @@ function StatsRibbon({ stats = [] }: StatsRibbonProps) {
       <div className="stats-ribbon__inner">
         {stats.map((stat, i) => (
           <div className="stats-ribbon__card" key={i}>
-            <span className="stats-ribbon__index">{i + 1}</span>
             <AnimatedValue value={stat.value} />
             <span className="stats-ribbon__label">{stat.label}</span>
           </div>
