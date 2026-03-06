@@ -20,6 +20,10 @@ export const SEASON_START_BLOCK = 2349484n
 export const SEASON_POOL_TERM_ID = '0xd1315af387fa4148375918e4917466d2ba36c49d07c547c9e04c881b76437d10'
 export const SEASON_POOL_CURVE_ID = 1
 
+// ── Privy Auth ──
+export const PRIVY_APP_ID = 'cmj05tjsj03thjs0c3mgxrixm'
+export const PRIVY_CLIENT_ID = 'client-WY6U3b3LFEgbveR2FVgiyTTbRWKCZhy6vEVFzQt9NvZYS'
+
 // ── Predicate IDs (mainnet) ──
 export const PREDICATE_IDS = {
   TRUSTS: '0x3a73f3b1613d166eea141a25a2adc70db9304ab3c4e90daecad05f86487c3ee9',
