@@ -12,8 +12,19 @@ export class EventFetcher {
   private events: TransactionForwardedEvent[] = []
   private lastScannedBlock = 0n
   private startBlock: bigint | null = null
+  private fetching: Promise<TransactionForwardedEvent[]> | null = null
 
   async fetch(): Promise<TransactionForwardedEvent[]> {
+    if (this.fetching) return this.fetching
+    this.fetching = this._doFetch()
+    try {
+      return await this.fetching
+    } finally {
+      this.fetching = null
+    }
+  }
+
+  private async _doFetch(): Promise<TransactionForwardedEvent[]> {
     if (!this.startBlock) {
       this.startBlock = await this._resolveStartBlock()
       this.lastScannedBlock = this.startBlock

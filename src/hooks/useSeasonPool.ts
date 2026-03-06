@@ -13,7 +13,7 @@ function processPositions(vault: VaultRaw): { positions: PoolPosition[]; vaultSt
   const positions: PoolPosition[] = (vault.positions || [])
     .filter((p) => BigInt(p.shares || '0') > 0n)
     .map((p) => {
-      const shares = BigInt(p.shares)
+      const shares = BigInt(p.shares || '0')
       const totalDeposited = BigInt(p.total_deposit_assets_after_total_fees || '0')
       const totalRedeemed = BigInt(p.total_redeem_assets_for_receiver || '0')
       const currentValue = (shares * sharePrice) / 10n ** 18n
@@ -35,7 +35,7 @@ function processPositions(vault: VaultRaw): { positions: PoolPosition[]; vaultSt
       }
     })
 
-  positions.sort((a, b) => (b.currentValue > a.currentValue ? 1 : -1))
+  positions.sort((a, b) => b.currentValue > a.currentValue ? -1 : b.currentValue < a.currentValue ? 1 : 0)
 
   return {
     positions,
@@ -89,7 +89,8 @@ export function useSeasonPool(enabled: boolean) {
     if (enabled && !fetched) {
       load()
     }
-  }, [enabled, fetched, load])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, fetched])
 
   return { data, vaultStats, loading, error }
 }

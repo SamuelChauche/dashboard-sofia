@@ -14,8 +14,7 @@
 
 .leaderboard__header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   margin-bottom: var(--space-xl);
   flex-wrap: wrap;
   gap: var(--space-md);
@@ -23,8 +22,8 @@
 
 .leaderboard__controls {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
   gap: var(--space-sm);
 }
 
@@ -64,38 +63,30 @@
   color: var(--color-text-primary);
 }
 
-.leaderboard__filters {
-  display: flex;
-  gap: var(--space-sm);
+/* Sortable column headers */
+.leaderboard__cell--sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--transition-fast);
 }
 
-.leaderboard__filter {
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--border-radius-pill);
-  background: var(--color-bg-glass-light);
-  border: 1px solid var(--color-border-glass);
-  transition: all var(--transition-fast);
-}
-
-.leaderboard__filter:hover {
+.leaderboard__cell--sortable:hover {
   color: var(--color-text-primary);
-  border-color: var(--color-primary);
 }
 
-.leaderboard__filter--active {
-  background: var(--gradient-cta);
-  background-size: 200% 200%;
-  animation: orb-gradient 20s ease infinite;
-  color: var(--color-primary-dark);
-  border-color: transparent;
+.leaderboard__cell--sorted {
+  color: var(--color-primary);
 }
 
-.leaderboard__filter--active:hover {
-  color: var(--color-primary-dark);
+.leaderboard__sort-arrow {
+  margin-left: 4px;
+  font-size: 10px;
+  vertical-align: middle;
+}
+
+/* Active column highlight on body cells */
+.leaderboard__cell--active-col {
+  background: rgba(199, 134, 108, 0.06);
 }
 
 .leaderboard__table-wrapper {
@@ -300,7 +291,18 @@
   color: #ef4444;
 }
 
+.leaderboard__avatar-img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: var(--space-xs);
+}
+
 .leaderboard__address-link {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   font-weight: 500;
@@ -349,9 +351,6 @@
     align-items: flex-start;
   }
 
-  .leaderboard__filters {
-    flex-wrap: wrap;
-  }
 }
 
 @media (max-width: 480px) {
