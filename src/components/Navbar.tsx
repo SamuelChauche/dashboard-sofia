@@ -6,9 +6,7 @@ function Navbar() {
   const { login } = useLogin();
   const { logout } = useLogout();
 
-  const walletAddress = user?.linkedAccounts?.find(
-    (a: any) => a.type === 'wallet'
-  )?.address as string | undefined;
+  const walletAddress = user?.wallet?.address;
 
   const displayAddress = walletAddress
     ? walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4)

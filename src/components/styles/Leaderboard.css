@@ -344,6 +344,16 @@
   letter-spacing: 0.5px;
 }
 
+/* Connected user row highlight */
+.leaderboard__row--self {
+  border-left: 3px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.leaderboard__row--self:hover {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .leaderboard__header {

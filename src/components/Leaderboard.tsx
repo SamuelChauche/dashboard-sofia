@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { formatEther } from 'viem';
 import type { Address } from 'viem';
-import { useSeasonPool } from '../hooks/useSeasonPool';
 import { useEnsNames } from '../hooks/useEnsNames';
 import { EXPLORER_URL } from '../config';
 import type { LeaderboardProps, AlphaTester, PoolPosition } from '../types';
@@ -84,19 +83,17 @@ const POOL_COLUMNS: { label: string; key: PoolSortOption }[] = [
   { label: 'P&L %', key: 'P&L %' },
 ];
 
-function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardProps) {
+function Leaderboard({ alphaData = [], alphaLoading, alphaError, poolData, poolLoading, poolError, connectedAddress }: LeaderboardProps) {
   const [activeTab, setActiveTab] = useState<'alpha' | 'pool'>('alpha');
   const [alphaSortBy, setAlphaSortBy] = useState<AlphaSortOption>('TX');
   const [poolSortBy, setPoolSortBy] = useState<PoolSortOption>('P&L %');
-
-  const { data: poolData, loading: poolLoading, error: poolError } = useSeasonPool(activeTab === 'pool');
 
   const sortedAlpha = useMemo(() => sortAlpha(alphaData, alphaSortBy), [alphaData, alphaSortBy]);
   const sortedPool = useMemo(() => poolData ? sortPool(poolData, poolSortBy) : [], [poolData, poolSortBy]);
 
   const allAddresses = useMemo(() => {
     const alphaAddrs = alphaData.map((u) => u.address);
-    const poolAddrs = (poolData || []).map((p) => p.address);
+    const poolAddrs = (poolData || []).map((p: PoolPosition) => p.address);
     return [...alphaAddrs, ...poolAddrs] as Address[];
   }, [alphaData, poolData]);
 
@@ -158,10 +155,12 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardPr
                       <td className="leaderboard__cell leaderboard__cell--error" colSpan={6}>{error}</td>
                     </tr>
                   )}
-                  {!loading && !error && sortedAlpha.map((user, i) => (
+                  {!loading && !error && sortedAlpha.map((user, i) => {
+                    const isSelf = connectedAddress && user.address.toLowerCase() === connectedAddress.toLowerCase();
+                    return (
                     <tr
                       key={user.address}
-                      className={`leaderboard__row${i < 3 ? ' leaderboard__row--highlighted' : ''}`}
+                      className={`leaderboard__row${i < 3 ? ' leaderboard__row--highlighted' : ''}${isSelf ? ' leaderboard__row--self' : ''}`}
                     >
                       <td className="leaderboard__cell leaderboard__cell--rank">{i + 1}</td>
                       <td className="leaderboard__cell leaderboard__cell--address">
@@ -192,7 +191,8 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardPr
                         <span className="leaderboard__mono">{user.tx.toLocaleString()}</span>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </>
             ) : (
@@ -219,10 +219,12 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardPr
                       <td className="leaderboard__cell leaderboard__cell--error" colSpan={5}>{poolError}</td>
                     </tr>
                   )}
-                  {!poolLoading && !poolError && sortedPool.map((pos, i) => (
+                  {!poolLoading && !poolError && sortedPool.map((pos, i) => {
+                    const isSelf = connectedAddress && pos.address.toLowerCase() === connectedAddress.toLowerCase();
+                    return (
                     <tr
                       key={pos.address}
-                      className={`leaderboard__row${i < 3 ? ' leaderboard__row--highlighted' : ''}`}
+                      className={`leaderboard__row${i < 3 ? ' leaderboard__row--highlighted' : ''}${isSelf ? ' leaderboard__row--self' : ''}`}
                     >
                       <td className="leaderboard__cell leaderboard__cell--rank">{i + 1}</td>
                       <td className="leaderboard__cell leaderboard__cell--address">
@@ -254,7 +256,8 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardPr
                         </span>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </>
             )}
