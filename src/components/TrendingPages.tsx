@@ -1,43 +1,63 @@
-import { useState } from 'react';
-import { trending } from '../data';
+import { useTrending } from '../hooks/useTrending';
+import type { IntentCategory } from '../types';
 import './styles/TrendingPages.css';
 
-const FILTER_OPTIONS = ['Sort Rate', 'Explorers'];
+const CATEGORY_LABELS: Record<IntentCategory, string> = {
+  trusted: 'Trusted',
+  distrusted: 'Distrusted',
+  work: 'Work',
+  learning: 'Learning',
+  fun: 'Fun',
+  inspiration: 'Inspiration',
+};
+
+function SkeletonCards() {
+  return Array.from({ length: 6 }).map((_, i) => (
+    <div className="trending__card trending__card--skeleton" key={i}>
+      <div className="trending__skeleton trending__skeleton--favicon" />
+      <div className="trending__skeleton trending__skeleton--text" />
+      <div className="trending__skeleton trending__skeleton--text-sm" />
+    </div>
+  ));
+}
 
 function TrendingPages() {
-  const [filter, setFilter] = useState('Sort Rate');
+  const { items, loading, error } = useTrending();
 
   return (
     <section className="trending">
       <div className="trending__inner">
         <div className="trending__header">
           <h2 className="trending__title">Trending Pages</h2>
-          <div className="trending__filters">
-            {FILTER_OPTIONS.map((option) => (
-              <button
-                key={option}
-                className={`trending__filter${filter === option ? ' trending__filter--active' : ''}`}
-                onClick={() => setFilter(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
         </div>
 
+        {error && <p className="trending__error">{error}</p>}
+
         <div className="trending__grid">
-          {trending.map((item, i) => (
-            <div className="trending__card" key={i} data-intent={item.intent.toLowerCase()}>
+          {loading && <SkeletonCards />}
+          {!loading && items.map((item) => (
+            <a
+              key={item.category}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="trending__card"
+              data-intent={item.category}
+            >
               <div className="trending__card-top">
-                <span className="trending__card-title">{item.title}</span>
-                <span className="trending__card-badge">{item.badge}</span>
-              </div>
-              <div className="trending__card-bottom">
-                <span className={`trending__intent trending__intent--${item.intent.toLowerCase()}`}>
-                  {item.intentLabel}
+                <img
+                  src={item.favicon}
+                  alt=""
+                  className="trending__favicon"
+                  width={24}
+                  height={24}
+                />
+                <span className={`trending__badge trending__badge--${item.category}`}>
+                  {CATEGORY_LABELS[item.category]}
                 </span>
               </div>
-            </div>
+              <span className="trending__domain">{item.domain}</span>
+            </a>
           ))}
         </div>
       </div>
