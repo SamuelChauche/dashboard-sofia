@@ -79,7 +79,6 @@ const ALPHA_COLUMNS: { label: string; key: AlphaSortOption }[] = [
 ];
 
 const POOL_COLUMNS: { label: string; key: PoolSortOption }[] = [
-  { label: 'Shares', key: 'Shares' },
   { label: 'Current Value', key: 'Current Value' },
   { label: 'P&L', key: 'P&L' },
   { label: 'P&L %', key: 'P&L %' },
@@ -172,13 +171,11 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardPr
                           rel="noopener noreferrer"
                           className="leaderboard__address-link"
                         >
-                          {getAvatar(user.address) && (
-                            <img
-                              src={getAvatar(user.address)!}
-                              alt=""
-                              className="leaderboard__avatar-img"
-                            />
-                          )}
+                          <img
+                            src={getAvatar(user.address)}
+                            alt=""
+                            className="leaderboard__avatar-img"
+                          />
                           {getDisplay(user.address)}
                         </a>
                       </td>
@@ -216,10 +213,10 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardPr
                   </tr>
                 </thead>
                 <tbody>
-                  {poolLoading && <SkeletonRows cols={6} />}
+                  {poolLoading && <SkeletonRows cols={5} />}
                   {poolError && (
                     <tr className="leaderboard__row">
-                      <td className="leaderboard__cell leaderboard__cell--error" colSpan={6}>{poolError}</td>
+                      <td className="leaderboard__cell leaderboard__cell--error" colSpan={5}>{poolError}</td>
                     </tr>
                   )}
                   {!poolLoading && !poolError && sortedPool.map((pos, i) => (
@@ -235,18 +232,13 @@ function Leaderboard({ alphaData = [], alphaLoading, alphaError }: LeaderboardPr
                           rel="noopener noreferrer"
                           className="leaderboard__address-link"
                         >
-                          {getAvatar(pos.address) && (
-                            <img
-                              src={getAvatar(pos.address)!}
-                              alt=""
-                              className="leaderboard__avatar-img"
-                            />
-                          )}
+                          <img
+                            src={getAvatar(pos.address)}
+                            alt=""
+                            className="leaderboard__avatar-img"
+                          />
                           {getDisplay(pos.address)}
                         </a>
-                      </td>
-                      <td className={colClass('Shares', poolSortBy)}>
-                        <span className="leaderboard__mono">{formatTrust(pos.shares)}</span>
                       </td>
                       <td className={colClass('Current Value', poolSortBy)}>
                         <span className="leaderboard__mono">{formatTrust(pos.currentValue)}</span>

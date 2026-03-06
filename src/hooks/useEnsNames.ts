@@ -3,6 +3,8 @@ import { createPublicClient, http, getAddress } from 'viem'
 import { mainnet } from 'viem/chains'
 import { normalize } from 'viem/ens'
 import type { Address } from 'viem'
+import { createAvatar } from '@dicebear/core'
+import { glass } from '@dicebear/collection'
 import { graphqlQuery } from '../services/graphqlClient'
 
 // ENS fallback client for addresses not indexed by Intuition
@@ -175,8 +177,12 @@ export function useEnsNames(addresses: Address[]) {
     return addr.slice(0, 6) + '...' + addr.slice(-4)
   }
 
-  function getAvatar(addr: Address): string | null {
-    return avatarCache.get(addr.toLowerCase()) || null
+  function getAvatar(addr: Address): string {
+    const cached = avatarCache.get(addr.toLowerCase())
+    if (cached) return cached
+    // DiceBear fallback — generate deterministic glass avatar from address
+    const avatar = createAvatar(glass, { seed: addr })
+    return avatar.toDataUri()
   }
 
   return { getDisplay, getAvatar }
