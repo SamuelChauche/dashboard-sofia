@@ -19,7 +19,39 @@ export interface GetSeasonPoolPositionsResponse {
   vaults: VaultRaw[]
 }
 
+// ── Trending Response Types ──
+
+export interface TrendingTripleRaw {
+  object: {
+    label: string
+    value?: { thing?: { url?: string } }
+  }
+  all_positions: Array<{ account: { id: string } }>
+}
+
+export interface GetTrendingByPredicateResponse {
+  triples: TrendingTripleRaw[]
+}
+
 // ── Queries ──
+
+export const GET_TRENDING_BY_PREDICATE = `
+  query GetTrendingByPredicate($predicateId: String!, $limit: Int!) {
+    triples(
+      where: { predicate_id: { _eq: $predicateId } }
+      order_by: [{ positions_aggregate: { count: desc } }, { created_at: desc }]
+      limit: $limit
+    ) {
+      object {
+        label
+        value { thing { url } }
+      }
+      all_positions: positions(where: { shares: { _gt: "0" } }) {
+        account { id }
+      }
+    }
+  }
+`
 
 export const GET_SEASON_POOL_POSITIONS = `
   query GetSeasonPoolPositions($termId: String!, $curveId: numeric!) {

@@ -19,9 +19,6 @@ function HowRewards() {
                 <span className="rewards__icon">{reward.icon}</span>
               )}
               <h3 className="rewards__card-title">{reward.title}</h3>
-              <span className={`rewards__amount rewards__amount--${reward.theme}`}>
-                {reward.reward}
-              </span>
               <p className="rewards__desc">{reward.desc}</p>
             </div>
           ))}

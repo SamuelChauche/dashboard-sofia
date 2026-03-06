@@ -1,17 +1,7 @@
-import type { TrendingItem, Reward } from './types'
-
-export const trending: TrendingItem[] = [
-  { title: "Intending", badge: "/CRI", intent: "Learning", intentLabel: "Learning" },
-  { title: "Intending", badge: "/CRI", intent: "Work", intentLabel: "Work" },
-  { title: "Intending", badge: "/CRI", intent: "Work", intentLabel: "Work" },
-  { title: "Intending", badge: "/CRI", intent: "Learning", intentLabel: "Learning" },
-  { title: "Intending", badge: "/CRI", intent: "Fun", intentLabel: "Fun" },
-  { title: "Intending", badge: "/CRI", intent: "Inspiration", intentLabel: "Inspiration" },
-];
+import type { Reward } from './types'
 
 export const rewards: Reward[] = [
-  { icon: "/badges/pioneer.png", title: "Pioneer", reward: "+50 Gold", desc: "First to recommend at show", theme: "pioneer" },
-  { icon: "/badges/explorer.png", title: "Explorer", reward: "+20 Gold", desc: "Translate with +50 Gold", theme: "explorer" },
-  { icon: "/badges/contributor.png", title: "Contributor", reward: "+10 Gold", desc: "We helped you have Found Smilring Core", theme: "contributor" },
-  { icon: "/badges/trust.png", title: "Daily Voter", reward: "+5 Gold/vote", desc: "You find cancel Install Voting VI...", theme: "voter" },
-];
+  { icon: "/badges/pioneer.png", title: "Pioneer", desc: "First opinion claimed on a page", theme: "pioneer" },
+  { icon: "/badges/explorer.png", title: "Explorer", desc: "2nd to 10th opinion claimed on a page", theme: "explorer" },
+  { icon: "/badges/contributor.png", title: "Contributor", desc: "11th+ opinion claimed on a page", theme: "contributor" },
+]

@@ -28,34 +28,12 @@
   color: var(--color-text-primary);
 }
 
-.trending__filters {
-  display: flex;
-  gap: var(--space-sm);
-}
-
-.trending__filter {
+.trending__error {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--border-radius-pill);
-  background: var(--color-bg-glass-light);
-  border: 1px solid var(--color-border-glass);
-  transition: all var(--transition-fast);
-}
-
-.trending__filter:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-primary);
-}
-
-.trending__filter--active {
-  background: var(--gradient-cta);
-  background-size: 200% 200%;
-  animation: orb-gradient 20s ease infinite;
-  color: var(--color-primary-dark);
-  border-color: transparent;
+  color: var(--color-error);
+  text-align: center;
+  margin-bottom: var(--space-lg);
 }
 
 .trending__grid {
@@ -73,8 +51,10 @@
   padding: var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   box-shadow: var(--glass-shadow);
+  text-decoration: none;
+  color: inherit;
   transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
               box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -86,6 +66,16 @@
 }
 
 /* Intent-colored border glow on hover */
+.trending__card[data-intent="trusted"]:hover {
+  border-color: var(--color-intent-trusted);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--color-intent-trusted) 15%, transparent);
+}
+
+.trending__card[data-intent="distrusted"]:hover {
+  border-color: var(--color-intent-distrusted);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--color-intent-distrusted) 15%, transparent);
+}
+
 .trending__card[data-intent="work"]:hover {
   border-color: var(--color-intent-work);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--color-intent-work) 15%, transparent);
@@ -106,72 +96,101 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--color-intent-inspiration) 15%, transparent);
 }
 
-.trending__card[data-intent="buying"]:hover {
-  border-color: var(--color-intent-buying);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--color-intent-buying) 15%, transparent);
-}
-
 .trending__card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.trending__card-title {
+.trending__favicon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.trending__badge {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-pill);
+  border: 1px solid;
+  opacity: 0.9;
+}
+
+.trending__badge--trusted { color: var(--color-intent-trusted); border-color: var(--color-intent-trusted); }
+.trending__badge--distrusted { color: var(--color-intent-distrusted); border-color: var(--color-intent-distrusted); }
+.trending__badge--work { color: var(--color-intent-work); border-color: var(--color-intent-work); }
+.trending__badge--learning { color: var(--color-intent-learning); border-color: var(--color-intent-learning); }
+.trending__badge--fun { color: var(--color-intent-fun); border-color: var(--color-intent-fun); }
+.trending__badge--inspiration { color: var(--color-intent-inspiration); border-color: var(--color-intent-inspiration); }
+
+.trending__card-label {
   font-family: var(--font-display);
   font-size: var(--font-size-base);
   font-weight: 400;
   color: var(--color-text-primary);
-}
-
-.trending__card-badge {
-  font-family: var(--font-body);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--border-radius-pill);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .trending__card-bottom {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
-.trending__intent {
+.trending__domain {
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
-  font-weight: 500;
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--border-radius-pill);
-  border: 1px solid;
-  opacity: 0.8;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.trending__intent--work {
-  color: var(--color-intent-work);
-  border-color: var(--color-intent-work);
+.trending__certifiers {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-left: var(--space-sm);
 }
 
-.trending__intent--learning {
-  color: var(--color-intent-learning);
-  border-color: var(--color-intent-learning);
+/* Skeleton loading */
+.trending__card--skeleton {
+  pointer-events: none;
 }
 
-.trending__intent--fun {
-  color: var(--color-intent-fun);
-  border-color: var(--color-intent-fun);
+.trending__skeleton {
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--color-bg-glass-light) 25%, var(--color-bg-glass-lighter) 50%, var(--color-bg-glass-light) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease infinite;
 }
 
-.trending__intent--inspiration {
-  color: var(--color-intent-inspiration);
-  border-color: var(--color-intent-inspiration);
+.trending__skeleton--favicon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
 }
 
-.trending__intent--buying {
-  color: var(--color-intent-buying);
-  border-color: var(--color-intent-buying);
+.trending__skeleton--text {
+  height: 16px;
+  width: 80%;
+}
+
+.trending__skeleton--text-sm {
+  height: 12px;
+  width: 50%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* Responsive */

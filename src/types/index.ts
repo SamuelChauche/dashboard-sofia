@@ -56,21 +56,22 @@ export interface VaultStats {
   sharePrice: bigint
 }
 
-// ── Mock Data ──
+// ── Trending ──
 
-export type IntentType = 'Work' | 'Learning' | 'Fun' | 'Inspiration'
+export type IntentCategory = 'trusted' | 'distrusted' | 'work' | 'learning' | 'fun' | 'inspiration'
 
-export interface TrendingItem {
-  title: string
-  badge: string
-  intent: IntentType
-  intentLabel: string
+export interface TrendingItemLive {
+  category: IntentCategory
+  label: string
+  url: string
+  domain: string
+  favicon: string
+  certifiers: number
 }
 
 export interface Reward {
   icon: string
   title: string
-  reward: string
   desc: string
   theme: string
 }
