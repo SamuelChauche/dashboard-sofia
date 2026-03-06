@@ -21,8 +21,8 @@ export const SEASON_POOL_TERM_ID = '0xd1315af387fa4148375918e4917466d2ba36c49d07
 export const SEASON_POOL_CURVE_ID = 1
 
 // ── Privy Auth ──
-export const PRIVY_APP_ID = 'cmj05tjsj03thjs0c3mgxrixm'
-export const PRIVY_CLIENT_ID = 'client-WY6U3b3LFEgbveR2FVgiyTTbRWKCZhy6vEVFzQt9NvZYS'
+export const PRIVY_APP_ID = import.meta.env.VITE_PRIVY_APP_ID as string
+export const PRIVY_CLIENT_ID = import.meta.env.VITE_PRIVY_CLIENT_ID as string
 
 // ── Predicate IDs (mainnet) ──
 export const PREDICATE_IDS = {
