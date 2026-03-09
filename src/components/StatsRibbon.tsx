@@ -3,19 +3,21 @@ import type { StatsRibbonProps } from '../types';
 import './styles/StatsRibbon.css';
 
 function parseValue(str: string) {
-  if (str.endsWith('k')) {
-    const numPart = str.replace(/[^0-9.]/g, '');
-    return { num: parseFloat(numPart), suffix: 'k', decimals: numPart.includes('.') ? numPart.split('.')[1].length : 0 };
-  }
-  const cleaned = str.replace(/[^0-9]/g, '');
-  return { num: parseInt(cleaned, 10) || 0, suffix: '', decimals: 0 };
+  // Extract trailing non-numeric suffix (e.g. "k T", " T", "k")
+  const match = str.match(/^([0-9.,\s]+)(.*)$/);
+  if (!match) return { num: 0, suffix: '', decimals: 0 };
+
+  const numStr = match[1].replace(/[^0-9.]/g, '');
+  const suffix = match[2].trim();
+  const num = parseFloat(numStr) || 0;
+  const decimals = numStr.includes('.') ? numStr.split('.')[1].length : 0;
+
+  return { num, suffix, decimals };
 }
 
 function formatValue(current: number, suffix: string, decimals: number) {
-  if (suffix === 'k') {
-    return current.toFixed(decimals) + 'k';
-  }
-  return Math.round(current).toLocaleString();
+  const formatted = decimals > 0 ? current.toFixed(decimals) : Math.round(current).toLocaleString();
+  return suffix ? `${formatted} ${suffix}` : formatted;
 }
 
 function easeOutExpo(t: number) {
