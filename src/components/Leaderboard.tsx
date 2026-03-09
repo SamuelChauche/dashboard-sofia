@@ -11,9 +11,9 @@ type PoolSortOption = 'Shares' | 'Current Value' | 'P&L' | 'P&L %';
 
 function formatTrust(wei: bigint) {
   const num = parseFloat(formatEther(wei));
-  if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
-  if (num >= 1) return num.toFixed(2);
-  return num.toFixed(4);
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k T';
+  if (num >= 1) return num.toFixed(2) + ' T';
+  return num.toFixed(4) + ' T';
 }
 
 function sortAlpha(data: AlphaTester[], sortBy: AlphaSortOption) {

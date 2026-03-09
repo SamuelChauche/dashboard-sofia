@@ -42,8 +42,10 @@ function aggregateEvents(events: TransactionForwardedEvent[]): AlphaTestersData 
       totalPioneers++
     }
 
-    entry.trustVolume += evt.totalReceived
-    totalTrustVolume += evt.totalReceived
+    if (evt.operation === 'deposit' || evt.operation === 'depositBatch') {
+      entry.trustVolume += evt.multiVaultValue
+      totalTrustVolume += evt.multiVaultValue
+    }
   }
 
   const leaderboard: AlphaTester[] = Array.from(wallets.values()).map((w) => ({

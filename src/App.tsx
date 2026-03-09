@@ -18,9 +18,9 @@ import './App.css';
 
 function formatTrustShort(wei: bigint) {
   const num = parseFloat(formatEther(wei));
-  if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
-  if (num >= 1) return num.toFixed(1);
-  return num.toFixed(4);
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k T';
+  if (num >= 1) return num.toFixed(1) + ' T';
+  return num.toFixed(4) + ' T';
 }
 
 function App() {
