@@ -15,6 +15,7 @@ import { useAlphaTesters } from './hooks/useAlphaTesters';
 import { useSeasonPool } from './hooks/useSeasonPool';
 import { useUserStats } from './hooks/useUserStats';
 import './App.css';
+import './components/styles/PersonalStats.css';
 
 function formatTrustShort(wei: bigint) {
   const num = parseFloat(formatEther(wei));
@@ -52,11 +53,19 @@ function App() {
       <Hero />
       <StatsRibbon stats={stats} />
       {authenticated && walletAddress && !loading && (
-        <PersonalStats
-          userStats={userStats}
-          totalAlphaTesters={totals?.wallets ?? 0}
-          totalPoolStakers={vaultStats?.totalStakers ?? null}
-        />
+        <>
+          <section className="personal-stats">
+            <div className="personal-stats__inner">
+              <hr className="personal-stats__divider" />
+              <h2 className="personal-stats__title">Your Stats</h2>
+            </div>
+          </section>
+          <PersonalStats
+            userStats={userStats}
+            totalAlphaTesters={totals?.wallets ?? 0}
+            totalPoolStakers={vaultStats?.totalStakers ?? null}
+          />
+        </>
       )}
       <Leaderboard
         alphaData={leaderboard}

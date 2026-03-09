@@ -22,7 +22,6 @@ function PersonalStats({ userStats, totalAlphaTesters, totalPoolStakers }: Perso
     return (
       <section className="personal-stats">
         <div className="personal-stats__inner">
-          <h2 className="personal-stats__title">Your Stats</h2>
           <div className="personal-stats__not-found">
             <p className="personal-stats__not-found-text">
               You are not part of the Alpha Tester Program
@@ -55,7 +54,6 @@ function PersonalStats({ userStats, totalAlphaTesters, totalPoolStakers }: Perso
   return (
     <section className="personal-stats">
       <div className="personal-stats__inner">
-        <h2 className="personal-stats__title">Your Stats</h2>
         <div className="personal-stats__grid">
           {cards.map((card) => (
             <div

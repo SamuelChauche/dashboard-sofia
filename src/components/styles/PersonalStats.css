@@ -4,12 +4,19 @@
 
 .personal-stats {
   padding: 0 var(--space-xl);
-  margin-bottom: var(--space-section);
+  margin-bottom: var(--space-lg);
 }
 
 .personal-stats__inner {
   max-width: var(--max-width);
   margin: 0 auto;
+}
+
+.personal-stats__divider {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  margin-bottom: var(--space-xl);
 }
 
 .personal-stats__title {
@@ -24,9 +31,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: var(--space-lg);
+  margin-bottom: var(--space-section);
 }
 
 .personal-stats__card {
+  position: relative;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -37,12 +46,36 @@
   flex-direction: column;
   gap: var(--space-xs);
   box-shadow: var(--glass-shadow);
-  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+  transition: box-shadow var(--transition-base), transform var(--transition-fast);
+  overflow: hidden;
+}
+
+/* Shimmer / Shine effect (same as ribbon cards) */
+.personal-stats__card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.08) 45%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.08) 55%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  transition: none;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.personal-stats__card:hover::after {
+  animation: shimmer-slide 1.2s ease forwards;
 }
 
 .personal-stats__card:hover {
+  box-shadow: var(--shadow-primary-glow);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), var(--glass-shadow);
 }
 
 .personal-stats__card--positive {

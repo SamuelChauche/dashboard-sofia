@@ -9,7 +9,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <PrivyProvider
       appId={PRIVY_APP_ID}
-      clientId={PRIVY_CLIENT_ID}
+      {...(PRIVY_CLIENT_ID ? { clientId: PRIVY_CLIENT_ID } : {})}
       config={{
         loginMethods: ['wallet'],
         appearance: {
