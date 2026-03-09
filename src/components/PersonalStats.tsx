@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { formatEther } from 'viem';
+import type { Address } from 'viem';
 import type { UserStats } from '../types';
+import { OG_BASE_URL } from '../config';
 import './styles/PersonalStats.css';
 
 function formatTrust(wei: bigint) {
@@ -13,10 +16,56 @@ interface PersonalStatsProps {
   userStats: UserStats;
   totalAlphaTesters: number;
   totalPoolStakers: number | null;
+  walletAddress: Address;
+  displayName: string;
 }
 
-function PersonalStats({ userStats, totalAlphaTesters, totalPoolStakers }: PersonalStatsProps) {
+function PersonalStats({ userStats, totalAlphaTesters, totalPoolStakers, walletAddress, displayName }: PersonalStatsProps) {
   const { isAlphaTester, alphaData, alphaRank, poolData, poolRank } = userStats;
+  const [sharing, setSharing] = useState(false);
+
+  async function handleShare() {
+    if (!alphaData || !alphaRank) return;
+    setSharing(true);
+    try {
+      const body: Record<string, string | number> = {
+        wallet: walletAddress,
+        name: displayName,
+        alphaRank,
+        totalAlpha: totalAlphaTesters,
+        tx: alphaData.tx,
+        intentions: alphaData.intentions,
+        pioneer: alphaData.pioneer,
+        trustVolume: formatTrust(alphaData.trustVolume),
+      };
+
+      if (poolData && poolRank) {
+        body.poolRank = poolRank;
+        if (totalPoolStakers) body.totalPool = totalPoolStakers;
+        body.pnl = `${poolData.pnl >= 0n ? '+' : ''}${formatTrust(poolData.pnl)}`;
+        body.pnlPercent = `${poolData.pnlPercent >= 0 ? '+' : ''}${poolData.pnlPercent.toFixed(1)}%`;
+      }
+
+      const res = await fetch(`${OG_BASE_URL}/api/share/board`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const { url } = await res.json();
+
+      const tweetText = encodeURIComponent(
+        `Check out my Sofia Season stats! Alpha Rank #${alphaRank} of ${totalAlphaTesters}`
+      );
+      window.open(
+        `https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(url)}`,
+        '_blank'
+      );
+    } catch (err) {
+      console.error('Share failed:', err);
+    } finally {
+      setSharing(false);
+    }
+  }
 
   if (!isAlphaTester) {
     return (
@@ -66,6 +115,13 @@ function PersonalStats({ userStats, totalAlphaTesters, totalPoolStakers }: Perso
             </div>
           ))}
         </div>
+        <button
+          className="personal-stats__share-btn"
+          onClick={handleShare}
+          disabled={sharing}
+        >
+          {sharing ? 'Generating...' : 'Share on 𝕏'}
+        </button>
       </div>
     </section>
   );

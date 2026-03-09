@@ -14,6 +14,7 @@ import FooterCTA from './components/FooterCTA';
 import { useAlphaTesters } from './hooks/useAlphaTesters';
 import { useSeasonPool } from './hooks/useSeasonPool';
 import { useUserStats } from './hooks/useUserStats';
+import { useEnsNames } from './hooks/useEnsNames';
 import './App.css';
 import './components/styles/PersonalStats.css';
 
@@ -34,6 +35,7 @@ function App() {
     : null;
 
   const userStats = useUserStats(walletAddress, leaderboard, poolData);
+  const { getDisplay } = useEnsNames(walletAddress ? [walletAddress] : []);
 
   const stats = useMemo(() => {
     if (!totals) return [];
@@ -64,6 +66,8 @@ function App() {
             userStats={userStats}
             totalAlphaTesters={totals?.wallets ?? 0}
             totalPoolStakers={vaultStats?.totalStakers ?? null}
+            walletAddress={walletAddress!}
+            displayName={getDisplay(walletAddress!)}
           />
         </>
       )}
