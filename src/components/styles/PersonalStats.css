@@ -10,6 +10,8 @@
 .personal-stats__inner {
   max-width: var(--max-width);
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .personal-stats__divider {
@@ -117,6 +119,37 @@
   opacity: 0.6;
 }
 
+/* Share button */
+.personal-stats__share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-end;
+  margin-top: var(--space-lg);
+  padding: 12px 24px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.personal-stats__share-btn:hover {
+  background: #2a2a2a;
+  border-color: #555;
+  transform: translateY(-1px);
+}
+
+.personal-stats__share-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* Not in program */
 .personal-stats__not-found {
   background: var(--glass-bg);
@@ -156,5 +189,10 @@
 
   .personal-stats__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .personal-stats__share-btn {
+    width: 100%;
+    margin-left: 0;
   }
 }

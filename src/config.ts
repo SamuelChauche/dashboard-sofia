@@ -24,6 +24,9 @@ export const SEASON_POOL_CURVE_ID = 1
 export const PRIVY_APP_ID = import.meta.env.VITE_PRIVY_APP_ID as string
 export const PRIVY_CLIENT_ID = import.meta.env.VITE_PRIVY_CLIENT_ID as string
 
+// ── OG Image Service ──
+export const OG_BASE_URL = (import.meta.env.VITE_OG_BASE_URL as string) || 'https://sofia-og.vercel.app'
+
 // ── Predicate IDs (mainnet) ──
 export const PREDICATE_IDS = {
   TRUSTS: '0x3a73f3b1613d166eea141a25a2adc70db9304ab3c4e90daecad05f86487c3ee9',
