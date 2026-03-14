@@ -4,15 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Sofia Dashboard
 
-Seasonal rewards dashboard for the Sofia browser extension — a Web3 protocol that tracks browsing intents and rewards users with Gold tokens.
+Behavioral reputation dashboard for the Sofia browser extension — a Web3 protocol that tracks browsing intents, connects social platforms via OAuth, and builds a verifiable reputation profile on-chain.
 
 ## Tech Stack
 
 - **Framework**: React 18 + Vite 6
-- **Language**: JavaScript (JSX, no TypeScript)
+- **Language**: TypeScript (strict: false)
 - **Styling**: Plain CSS (no preprocessor, no CSS-in-JS)
 - **Background**: WebGL shader via `ogl` library (Grainient component)
 - **Fonts**: Gotu (display) + Montserrat (body) — loaded from Google Fonts in `index.html`
+- **GraphQL**: `@0xsofia/dashboard-graphql` generated hooks (codegen from `.graphql` files)
+- **Blockchain**: `viem` for RPC calls, Intuition protocol on Base
+- **Data fetching**: React Query v5
 
 ## Commands
 
@@ -20,6 +23,9 @@ Seasonal rewards dashboard for the Sofia browser extension — a Web3 protocol t
 pnpm dev         # Start dev server (Vite)
 pnpm build       # Production build → dist/
 pnpm preview     # Preview production build
+
+# GraphQL codegen (after editing .graphql files)
+cd packages/graphql && pnpm codegen
 ```
 
 No test runner, linter, or formatter is configured.
@@ -28,29 +34,94 @@ No test runner, linter, or formatter is configured.
 
 ```
 src/
-├── main.jsx              # React root
-├── App.jsx               # Layout orchestrator + Grainient background
-├── App.css               # Root layout, z-index layers
-├── index.css             # Global reset, CSS variables, design tokens
-├── data.js               # All mock data (stats, leaderboard, trending, rewards)
-└── components/
-    ├── Navbar.jsx/css     # Header with logo + season title
-    ├── Hero.jsx/css       # Countdown timer + CTA button
-    ├── StatsRibbon.jsx/css# 5 animated stat counters (scroll-triggered)
-    ├── Leaderboard.jsx/css# Sortable user ranking table
-    ├── TrendingPages.jsx/css # Intent-tagged trending cards grid
-    ├── HowRewards.jsx/css # Reward explanation cards
-    ├── FooterCTA.jsx/css  # Footer
-    ├── Grainient.jsx/css  # WebGL animated gradient background (ogl)
+├── main.tsx                    # React root
+├── App.tsx                     # Layout orchestrator + Grainient background
+├── App.css                     # Root layout, z-index layers
+├── config.ts                   # Season configuration
+├── data.ts                     # Static data
+├── config/
+│   ├── platformCatalog.ts      # 100+ platform defs (name, icon, OAuth config, signals)
+│   ├── taxonomy.ts             # Domain → category → niche hierarchy (370+ niches)
+│   └── signalMatrix.ts         # Signal weights per domain/platform
+├── components/
+│   ├── profile/                # Profile-specific components (11 files)
+│   ├── styles/                 # Colocated CSS files (17 files)
+│   ├── Navbar.tsx              # Header
+│   ├── Hero.tsx                # Countdown + CTA
+│   ├── StatsRibbon.tsx         # Animated stat counters
+│   ├── Leaderboard.tsx         # Sortable ranking table
+│   ├── PersonalStats.tsx       # User stats + share
+│   ├── TrendingPages.tsx       # Trending cards
+│   ├── HowRewards.tsx          # Reward explanation
+│   ├── FooterCTA.tsx           # Footer
+│   └── Grainient.tsx           # WebGL gradient background
+├── pages/
+│   ├── DashboardPage.tsx       # Main landing (leaderboard, trending)
+│   ├── ProfilePage.tsx         # Profile with internal navigation
+│   └── OAuthCallbackPage.tsx   # OAuth redirect handler
+├── hooks/                      # 10 hooks (thin facades over services)
+├── services/                   # 5 services (profileService, oauthService, rpcClient, etc.)
+├── types/                      # 3 type files (index, profile, reputation)
+└── utils/
+    └── sofiaDetect.ts          # Extension detection + certify URL helper
 ```
 
 ## Architecture
 
-- **Single-page app**, no routing
-- **No state management library** — local `useState`/`useEffect` only
-- **Data source**: `src/data.js` exports all mock data (no API)
-- **Z-index layers**: Background (0) → Content (1) → Navbar (100)
-- **Component pattern**: Each component = `.jsx` + colocated `.css` file
+### Data Flow
+
+```
+Services (services/)           — Data fetching, transformation, business logic
+    ↓
+Custom Hooks (hooks/)          — Thin orchestration, React state
+    ↓
+Pages (pages/)                 — Route-level orchestration
+    ↓
+Components (components/)       — Presentation only
+```
+
+**Never call services directly from components** — always through hooks.
+
+### ProfilePage Navigation
+
+ProfilePage uses internal `view` state instead of tabs:
+
+```
+overview → interests → niches → platforms → scores
+    ↑          |          |          |          |
+    └──────────┴──────────┴──────────┴──────────┘
+                    (← Back)
+```
+
+Views: `'overview' | 'interests' | 'niches' | 'platforms' | 'scores'`
+
+### GraphQL Pattern
+
+Uses `@0xsofia/dashboard-graphql` generated hooks with fetcher pattern:
+
+```typescript
+import { useGetUserPositionsQuery } from "@0xsofia/dashboard-graphql"
+
+// In a service or hook:
+const data = await useGetUserPositionsQuery.fetcher({ accountId: address })()
+```
+
+**Important**: Generated types have an extra `term` level: `vault.term.triple` / `vault.term.atom` (not `vault.triple`).
+
+### Reputation System
+
+- **Domains**: 8 top-level interests (Tech & Dev, Gaming, Music & Audio, etc.)
+- **Categories**: ~50 groupings within domains
+- **Niches**: 370+ specific topics users can select
+- **Platforms**: 100+ connectable platforms (OAuth or manual)
+- **Scoring**: Signal-weighted scores per domain based on connected platform data
+- **Signal Matrix**: Maps platform signals to domain relevance weights
+
+### Sofia Extension Integration
+
+- Detection: `document.documentElement.dataset.sofiaExtension === 'true'`
+- Certify flow: `?sofia_certify=true` URL param triggers banner in extension content script
+- If Sofia not installed: redirects to Chrome Web Store
 
 ## Design System
 
@@ -65,28 +136,28 @@ Reference: `.claude/brandkit.md` for full brand guidelines.
 
 ### CSS Variables
 
-All design tokens live in `src/index.css` as `:root` custom properties:
+All design tokens in `src/index.css` as `:root` custom properties:
 - `--color-primary`, `--color-secondary`, `--color-accent-olive`
-- Intent colors: `--color-intent-work` (blue), `--color-intent-learning` (green), `--color-intent-fun` (amber), `--color-intent-inspiration` (purple)
+- Intent colors: `--color-intent-work`, `--color-intent-learning`, `--color-intent-fun`, `--color-intent-inspiration`
 - `--color-gold`, `--color-golden` for rewards
-- Spacing scale: `--space-xs` (4px) to `--space-6xl` (56px)
+- Spacing: `--space-xs` (4px) to `--space-6xl` (56px)
 - Font sizes: `--font-size-xs` (10px) to `--font-size-countdown` (48px)
-- Shadows, border-radius, transitions
 
 ### CSS Conventions
 
-- **BEM naming**: `.component__element--modifier` (e.g. `.leaderboard__row--highlighted`)
+- **BEM naming**: `.component__element--modifier` (e.g. `.overview-tab__section-title`)
 - **No utility classes** — all styles are component-scoped
 - **Responsive breakpoints**: 768px (tablet), 480px (mobile)
-- **Animations**: CSS `@keyframes` preferred; `requestAnimationFrame` for number counters
+- **Animations**: CSS `@keyframes` preferred; `requestAnimationFrame` for counters
 
 ## Key Implementation Details
 
-- **Countdown timer** targets `SEASON_END` in `data.js` — updates every second via `setInterval`
-- **StatsRibbon counters** use `IntersectionObserver` to trigger once on scroll, then animate with `requestAnimationFrame` + `easeOutExpo` easing
-- **Leaderboard sorting** cycles through 4 fields: streak, certs, gold, pioneer
-- **Grainient** is a full-screen fixed WebGL canvas behind all content — color props control the shader; keep colors dark to not overwhelm the UI
-- **TrendingPages** cards use `data-intent` attribute for CSS-driven intent-colored hover glows
+- **Countdown timer** targets `SEASON_END` in `config.ts` — updates every second
+- **StatsRibbon counters** use `IntersectionObserver` + `requestAnimationFrame` + `easeOutExpo`
+- **Leaderboard sorting** cycles through: streak, certs, gold, pioneer
+- **Grainient** is a full-screen fixed WebGL canvas — keep colors dark
+- **Share Profile** posts to `sofia-og.vercel.app/api/share` for OG image generation
+- **Domain accordion** in OverviewTab expands to show categories + toggleable niches
 
 ## Assets
 
@@ -94,3 +165,10 @@ All design tokens live in `src/index.css` as `:root` custom properties:
 - `public/goldcoin.png` — Gold token icon
 - `public/badges/` — pioneer.png, explorer.png, contributor.png, trust.png
 - `.claude/` — brandkit.md, mockup.png, badge source PNGs
+
+## Gotchas
+
+- GraphQL indexer stores addresses in EIP-55 checksummed format — use `_ilike` for address filters
+- `atoms` type has no `id` field — use `term_id`
+- React Query v5: `isFetching` for any request, `isLoading` for first load only
+- Generated types: `vault.term.triple` not `vault.triple`
