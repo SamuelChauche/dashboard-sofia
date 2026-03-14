@@ -27,7 +27,8 @@
 .leaderboard,
 .trending,
 .rewards,
-.footer {
+.footer,
+.profile-page {
   position: relative;
   z-index: 1;
 }

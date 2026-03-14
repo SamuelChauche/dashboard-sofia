@@ -66,6 +66,36 @@
   color: var(--color-text-primary);
 }
 
+/* Navigation Links */
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  text-decoration: none;
+  color: inherit;
+}
+
+.navbar__link {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--border-radius-pill);
+  transition: all var(--transition-fast);
+}
+
+.navbar__link:hover {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.navbar__link--active {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
 .navbar__right {
   display: flex;
   align-items: center;
