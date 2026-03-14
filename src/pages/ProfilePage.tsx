@@ -4,15 +4,25 @@ import { useNavigate } from 'react-router-dom'
 import ProfileHeader from '../components/profile/ProfileHeader'
 import ProfileTabs from '../components/profile/ProfileTabs'
 import DomainSelector from '../components/profile/DomainSelector'
+import NicheSelector from '../components/profile/NicheSelector'
 import { useDomainSelection } from '../hooks/useDomainSelection'
 import type { ProfileTab } from '../types/profile'
 import '../components/styles/profile.css'
+
+type DomainStep = 'domains' | 'niches'
 
 function ProfilePage() {
   const { authenticated, user } = usePrivy()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<ProfileTab>('overview')
-  const { selectedDomains, toggleDomain, maxDomains } = useDomainSelection()
+  const [domainStep, setDomainStep] = useState<DomainStep>('domains')
+  const {
+    selectedDomains,
+    selectedNiches,
+    toggleDomain,
+    toggleNiche,
+    maxDomains,
+  } = useDomainSelection()
 
   useEffect(() => {
     if (!authenticated) {
@@ -27,8 +37,13 @@ function ProfilePage() {
   const headerStats = [
     { label: 'Platforms', value: '0' },
     { label: 'Domains', value: String(selectedDomains.length) },
-    { label: 'Score', value: '—' },
+    { label: 'Niches', value: String(selectedNiches.length) },
   ]
+
+  const handleTabChange = (tab: ProfileTab) => {
+    setActiveTab(tab)
+    if (tab === 'domains') setDomainStep('domains')
+  }
 
   return (
     <section className="profile-page">
@@ -39,7 +54,7 @@ function ProfilePage() {
         />
         <ProfileTabs
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
         />
         <div className="profile-content">
           {activeTab === 'overview' && (
@@ -80,12 +95,22 @@ function ProfilePage() {
             </>
           )}
 
-          {activeTab === 'domains' && (
+          {activeTab === 'domains' && domainStep === 'domains' && (
             <DomainSelector
               selectedDomains={selectedDomains}
               onToggle={toggleDomain}
-              onContinue={() => setActiveTab('platforms')}
+              onContinue={() => setDomainStep('niches')}
               maxSelection={maxDomains}
+            />
+          )}
+
+          {activeTab === 'domains' && domainStep === 'niches' && (
+            <NicheSelector
+              selectedDomains={selectedDomains}
+              selectedNiches={selectedNiches}
+              onToggleNiche={toggleNiche}
+              onBack={() => setDomainStep('domains')}
+              onContinue={() => setActiveTab('platforms')}
             />
           )}
 

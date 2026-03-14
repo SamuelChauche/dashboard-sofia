@@ -1,0 +1,183 @@
+/* ===========================================
+   Niche Selector — Sofia Dashboard
+   =========================================== */
+
+.niche-selector {
+  margin-bottom: var(--space-2xl);
+}
+
+.niche-selector__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+}
+
+.niche-selector__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  color: var(--color-text-primary);
+}
+
+.niche-selector__count {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.niche-selector__count span {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* === Domain Section === */
+
+.niche-domain {
+  margin-bottom: var(--space-2xl);
+  padding: var(--space-xl);
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--border-radius-lg);
+}
+
+.niche-domain__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border-glass);
+}
+
+.niche-domain__icon {
+  font-size: 24px;
+}
+
+.niche-domain__name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.niche-domain__badge {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-pill);
+}
+
+/* === Category === */
+
+.niche-category {
+  margin-bottom: var(--space-lg);
+}
+
+.niche-category:last-child {
+  margin-bottom: 0;
+}
+
+.niche-category__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+/* === Chips === */
+
+.niche-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.niche-chip {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-glass-light);
+  border: 1px solid var(--color-border-glass);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--border-radius-pill);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.niche-chip:hover {
+  border-color: var(--color-border-light);
+  color: var(--color-text-primary);
+  background: var(--color-bg-glass-lighter);
+}
+
+.niche-chip--selected {
+  color: var(--color-bg-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.niche-chip--selected:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+  color: var(--color-bg-primary);
+}
+
+/* === Actions === */
+
+.niche-selector__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+.niche-selector__btn {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  padding: var(--space-sm) var(--space-2xl);
+  border-radius: var(--border-radius-pill);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+}
+
+.niche-selector__btn--primary {
+  color: var(--color-bg-primary);
+  background: var(--color-primary);
+}
+
+.niche-selector__btn--primary:hover {
+  background: var(--color-primary-light);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.niche-selector__btn--secondary {
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border-glass);
+}
+
+.niche-selector__btn--secondary:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-light);
+}
+
+/* === Responsive === */
+
+@media (max-width: 480px) {
+  .niche-domain {
+    padding: var(--space-lg);
+  }
+
+  .niche-chip {
+    font-size: 11px;
+    padding: 3px var(--space-sm);
+  }
+}
